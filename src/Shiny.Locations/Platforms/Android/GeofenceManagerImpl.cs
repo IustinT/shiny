@@ -70,16 +70,11 @@ namespace Shiny.Locations
             var regions = await this.Repository.GetAll();
             foreach (var region in regions)
                 await this.Create(region);
-
         }
 
 
-        public override IObservable<AccessState> WhenAccessStatusChanged()
-            => Observable.Interval(TimeSpan.FromSeconds(2)).Select(_ => this.Status);
-
-
-        public override AccessState Status
-            => this.context.GetCurrentLocationAccess(true, true, true, true);
+        //public override AccessState Status
+        //    => this.context.GetCurrentLocationAccess(true, true, true, true);
 
         public override Task<AccessState> RequestAccess()
             => this.context.RequestLocationAccess(true, true, true, true);

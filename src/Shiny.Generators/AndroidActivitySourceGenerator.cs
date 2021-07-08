@@ -116,7 +116,7 @@ namespace Shiny.Generators
                             builder.AppendLineInvariant("ToolbarResource = Resource.Layout.Toolbar;");
                             builder.AppendLineInvariant("base.OnCreate(savedInstanceState);");
                             builder.AppendLineInvariant("global::Xamarin.Forms.Forms.Init(this, savedInstanceState);");
-                            builder.AppendLineInvariant($"this.LoadApplication(new {this.values.XamarinFormsAppTypeName}());");
+                            builder.AppendLineInvariant($"this.LoadApplication(new global::{this.values.XamarinFormsAppTypeName}());");
                         }
                         else
                         {
@@ -131,6 +131,8 @@ namespace Shiny.Generators
 
         void TryAppendOnCreateThirdParty(INamedTypeSymbol activity, IndentedStringBuilder builder)
         {
+            if (this.context.HasMobileBuildToolsConfig())
+                builder.AppendLineInvariant("global::Mobile.BuildTools.Configuration.ConfigurationManager.Init(this);");
 
             // AiForms.SettingsView
             if (this.context.Compilation.GetTypeByMetadataName("AiForms.Renderers.Droid.SettingsViewInit") != null)
@@ -208,9 +210,9 @@ namespace Shiny.Generators
                 using (builder.BlockInvariant("protected override void OnNewIntent(Intent intent)"))
                 {
                     builder.AppendLine("base.OnNewIntent(intent);");
-                    builder.AppendLine();
                     builder.AppendLine("this.ShinyOnNewIntent(intent);");
-                    builder.AppendLine();
+                    if (this.context.HasXamarinEssentials())
+                        builder.AppendLine("global::Xamarin.Essentials.Platform.OnNewIntent(intent);");
                 }
             }
         }
