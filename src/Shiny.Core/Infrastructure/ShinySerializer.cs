@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 //using System.Text.Json;
@@ -27,8 +28,10 @@ namespace Shiny.Infrastructure
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
-                throw;
+                ShinyHost.Resolve<ILogger<ShinySerializer>>()
+                    .LogError(e, nameof(Deserialize), $"{objectType} - {value}");
+
+                return objectType.GetDefaultValue();
             }
         }
 
